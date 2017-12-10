@@ -67,26 +67,89 @@ film2.update()
 
 all_films = Film.all()
 
+
+# Advanced extensions:
+# Create new screening
+
+film1screening1 = Screening.new({
+  'film_id' => film1.id,
+  'screening_date' => 'December 11 2017',
+  'screening_time' => '19:00',
+  'capacity' => '10',
+  'tickets_sold' => '9'
+  })
+
+film1screening1.save()
+
+film1screening2 = Screening.new({
+  'film_id' => film1.id,
+  'screening_date' => 'December 11 2017',
+  'screening_time' => '22:00',
+  'capacity' => '13',
+  'tickets_sold' => '12'
+  })
+
+film1screening2.save()
+
+film2screening1 = Screening.new({
+  'film_id' => film2.id,
+  'screening_date' => 'December 11 2017',
+  'screening_time' => '21:00',
+  'capacity' => '20',
+  'tickets_sold' => '15'
+  })
+
+film2screening2 = Screening.new({
+  'film_id' => film2.id,
+  'screening_date' => 'December 12 2017',
+  'screening_time' => '20:00',
+  'capacity' => '25',
+  'tickets_sold' => '10'
+  })
+
+film2screening1.save()
+film2screening2.save()
+
+#Update screening
+
+film1screening1.screening_time = '19:30'
+film1screening1.capacity = '12'
+
+film1screening1.update()
+
+# delete screening
+
+# film1screening1.delete()
+
+# Return all screenings
+
+all_screenings = Screening.all()
+
+
 #Setup new tickets
 
 ticket1 = Ticket.new({
   'customer_id' => customer1.id,
-  'film_id' => film1.id
+  'film_id' => film1.id,
+  'screening_id' => film1screening1.id
   })
 
 ticket2 = Ticket.new({
   'customer_id' => customer2.id,
-  'film_id' => film2.id
+  'film_id' => film2.id,
+  'screening_id' => film2screening1.id
   })
 # Customer1 buys 2 tickets for film2
 ticket3 = Ticket.new({
   'customer_id' => customer1.id,
-  'film_id' => film2.id
+  'film_id' => film2.id,
+  'screening_id' => film2screening2.id
   })
 
 ticket4 = Ticket.new({
   'customer_id' => customer1.id,
-  'film_id' => film2.id
+  'film_id' => film2.id,
+  'screening_id' => film2screening2.id
   })
 
 ticket1.save()
@@ -112,7 +175,7 @@ film2_customers = film2.customers()
 
 # Customer buys film ticket - returns customer wallet amount ?
 
-customer1_wallet = customer1.buy_film_ticket(film2)
+# customer1_wallet = customer1.buy_film_ticket(film2)
 
 # Return all tickets
 
@@ -127,52 +190,23 @@ cust1_tix_count = customer1.tickets_count()
 
 film2_cust_count = film2.customers_count()
 
-# Advanced extensions:
-#
-#
-# Create new screening
-
-film1screening1 = Screening.new({
-  'film_id' => film1.id,
-  'screening_date' => 'December 11 2017',
-  'screening_time' => '19:00',
-  'capacity' => '10',
-  'tickets_sold' => '9'
-  })
-
-film1screening1.save()
-
-film2screening1 = Screening.new({
-  'film_id' => film2.id,
-  'screening_date' => 'December 11 2017',
-  'screening_time' => '21:00',
-  'capacity' => '20',
-  'tickets_sold' => '15'
-  })
-
-film2screening1.save()
-
-#Update screening
-
-film1screening1.screening_time = '19:30'
-film1screening1.capacity = '12'
-
-film1screening1.update()
-
-# delete screening
-
-# film1screening1.delete()
-
-# Return all screenings
-
-all_screenings = Screening.all()
 
 # Create a screenings table that lets us know what time films are showing
 
-# Write a method that finds out what is the most popular time (most tickets sold) for a given film
-# Limit the available tickets for screenings.
-# Add any other extensions you think would be great to have at a cinema!
+film2_screenings = film2.screenings()
+film1_screenings = film1.screenings()
 
+# Write a method that finds out what is the most popular time (most tickets sold) for a given film
+film1_popular_screening = film1.most_popular_screening()
+film2_popular_screening = film2.most_popular_screening()
+
+# Limit the available tickets for screenings.
+
+# ** not got this working for checking capacity **
+customer1_buy_ticket = customer1.buy_film_ticket(film2, film2screening1)
+customer2_buy_ticket = customer2.buy_film_ticket(film1, film1screening1)
+
+# Add any other extensions you think would be great to have at a cinema!
 
 binding.pry
 nil

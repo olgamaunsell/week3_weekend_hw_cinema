@@ -60,6 +60,36 @@ class Film
     return customers().count
   end
 
+  def screenings()
+
+    sql = "SELECT films.title, screenings.*
+        FROM films
+        INNER JOIN screenings
+        ON films.id = screenings.film_id
+        WHERE films.id = $1"
+
+    values =[@id]
+    query_film_screenings = SqlRunner.run(sql, values)
+
+    return Screening.map_items(query_film_screenings)
+    #how do I get it to return the film title aswell ?
+  end
+
+  def most_popular_screening()
+    sql = "SELECT screenings.*
+        FROM screenings
+        INNER JOIN films
+        ON films.id = screenings.film_id
+        WHERE films.id = $1
+        ORDER BY screenings.tickets_sold DESC limit 1"
+
+    values =[@id]
+    query_popular_screening = SqlRunner.run(sql, values)
+
+    return Screening.map_items(query_popular_screening)
+
+  end
+
 # Class methods
   def self.all()
     sql = "SELECT * FROM films"

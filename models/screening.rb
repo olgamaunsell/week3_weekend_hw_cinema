@@ -44,20 +44,53 @@ class Screening
     SqlRunner.run(sql, values)
   end
 
+  def check_available_seats()
+    return available_seats = @capacity - @tickets_sold
+  end
+
   # Class methods
-    def self.all()
-      sql = "SELECT * FROM screenings"
+  def self.all()
+    sql = "SELECT * FROM screenings"
 
-      query_screenings = SqlRunner.run(sql)
+    query_screenings = SqlRunner.run(sql)
 
-      screenings = query_screenings.map{|screening| Screening.new(screening)}
+    screenings = query_screenings.map{|screening| Screening.new(screening)}
 
-      return screenings
-    end
+    return screenings
+  end
 
-    def self.delete_all()
-      sql = "DELETE FROM screenings"
+  def self.delete_all()
+    sql = "DELETE FROM screenings"
 
-      SqlRunner.run(sql)
-    end
+    SqlRunner.run(sql)
+  end
+
+  def self.find_screening(film_id, date, time)
+    # Find screening that matches a film_id, date and time
+
+    sql = "SELECT id FROM screenings
+        WHERE screenings.film_id = $1 AND screenings.screening_date = $2 AND screenings.screening_time = $3"
+
+    values = [film_id, date, time]
+    sql_result = SqlRunner.run(sql, values)
+
+    binding.pry
+    found_screening = sql_result.map {|screening| Screening.new(screening)}
+
+    # if found_screening == nil
+    #   binding.pry
+    #   return false
+    # else
+    #   binding.pry
+    #   return found_screening[0]
+    #
+    # end
+  end
+  # helper method
+
+  def self.map_items(screening_hashes)
+    result = screening_hashes.map {|screening_hash|
+    Screening.new(screening_hash)}
+    return result
+  end
 end

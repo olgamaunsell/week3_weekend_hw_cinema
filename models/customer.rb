@@ -39,12 +39,26 @@ class Customer
     SqlRunner.run(sql, values)
   end
 
-  def buy_film_ticket(film)
+  # def buy_film_ticket(film, date, time)
+  def buy_film_ticket(film, screening)
     # Creates ticket, reduces customer's wallet by
     # price of film and returns customer's wallet amount
+    # screening = Screening.find_screening(film.id, date, time)
+    # available_seats = screening.check_available_seats
+    #
+    # if available_seats == 0
+    #   return "No seats available"
+    # end
 
-    new_ticket = Ticket.new({'customer_id' => @id, 'film_id' => film.id})
+    new_ticket = Ticket.new({'customer_id' => @id, 'film_id' => film.id,
+      'screening_id' => screening.id})
+
     new_ticket.save()
+
+    #update tickets sold
+
+    screening.tickets_sold += 1
+    screening.update()
 
     @funds -= film.price
 
@@ -103,11 +117,5 @@ class Customer
     Customer.new(customer_hash)}
     return result
   end
-
-
-
-
-
-
 
 end
