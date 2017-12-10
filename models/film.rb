@@ -38,6 +38,27 @@ class Film
     SqlRunner.run(sql, values)
   end
 
+  def customers()
+    # Removed DISTINCT from sql to list all customers
+    # that bought tickets for this film - is this correct ?
+
+    sql = "SELECT customers.*
+        FROM customers
+        INNER JOIN tickets
+        ON tickets.customer_id = customers.id
+        WHERE tickets.film_id = $1"
+
+    values =[@id]
+    query_customers = SqlRunner.run(sql,values)
+
+    return Customer.map_items(query_customers)
+
+  end
+
+  def customers_count()
+    # Counts the number of customers going to see film
+    return customers().count
+  end
 
 # Class methods
   def self.all()
@@ -58,5 +79,13 @@ class Film
 
   def self.find(id)
 
+  end
+
+  # helper method
+
+  def self.map_items(film_hashes)
+    result = film_hashes.map {|film_hash|
+    Film.new(film_hash)}
+    return result
   end
 end

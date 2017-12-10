@@ -1,4 +1,5 @@
 require_relative('../db/sql_runner')
+require( 'pry-byebug' )
 
 class Customer
 
@@ -38,13 +39,48 @@ class Customer
     SqlRunner.run(sql, values)
   end
 
+  def buy_film_ticket(film)
+    # Creates ticket, reduces customer's wallet by
+    # price of film and returns customer's wallet amount
+
+    new_ticket = Ticket.new({'customer_id' => @id, 'film_id' => film.id})
+    new_ticket.save()
+
+    @funds -= film.price
+
+    update()
+    # Not sure what to return ?
+    return @funds
+  end
+
+  def films
+    # Removed DISTINCT from sql to list all films
+    # customers has bought tickets for - is this correct ?
+    # e.g. customer buys 2 tickets for a film
+
+    sql = "SELECT films.*
+        FROM films
+        INNER JOIN tickets
+        ON tickets.film_id = films.id
+        WHERE tickets.customer_id = $1"
+
+    values =[@id]
+    query_films = SqlRunner.run(sql,values)
+
+    return Film.map_items(query_films)
+
+  end
+
+  def tickets_count
+    # Counts the number of tickets bought by customer
+    return films().count
+  end
 
 # Class methods
   def self.all()
     sql = "SELECT * FROM customers"
 
     query_customers = SqlRunner.run(sql)
-
     customers = query_customers.map{|customer| Customer.new(customer)}
 
     return customers
@@ -60,7 +96,13 @@ class Customer
 
   end
 
+  # helper method
 
+  def self.map_items(customer_hashes)
+    result = customer_hashes.map {|customer_hash|
+    Customer.new(customer_hash)}
+    return result
+  end
 
 
 
