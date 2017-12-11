@@ -45,7 +45,14 @@ class Screening
   end
 
   def check_available_seats()
+
     return available_seats = @capacity - @tickets_sold
+  end
+
+  def increase_tickets_sold()
+    #Could refactor - change so that there is an empty seats field in screenings instead
+    @tickets_sold += 1
+    update()
   end
 
   # Class methods
@@ -54,7 +61,7 @@ class Screening
 
     query_screenings = SqlRunner.run(sql)
 
-    screenings = query_screenings.map{|screening| Screening.new(screening)}
+    screenings = Screening.map_items(query_screenings)
 
     return screenings
   end
@@ -68,7 +75,7 @@ class Screening
   def self.find_screening(film_id, date, time)
     # Find screening that matches a film_id, date and time
 
-    sql = "SELECT id FROM screenings
+    sql = "SELECT * FROM screenings
         WHERE screenings.film_id = $1 AND screenings.screening_date = $2 AND screenings.screening_time = $3"
 
     values = [film_id, date, time]

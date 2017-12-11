@@ -39,32 +39,33 @@ class Customer
     SqlRunner.run(sql, values)
   end
 
-  # def buy_film_ticket(film, date, time)
+  ## def buy_film_ticket(film, date, time)
   def buy_film_ticket(film, screening)
-    # Creates ticket, reduces customer's wallet by
-    # price of film and returns customer's wallet amount
-    # screening = Screening.find_screening(film.id, date, time)
-    # available_seats = screening.check_available_seats
-    #
-    # if available_seats == 0
-    #   return "No seats available"
-    # end
+    # Checks if seat available, if so creates ticket, reduces customer's wallet by
+    # price of film and returns new ticket.
+
+    # #screening = Screening.find_screening(film.id, date, time)
+
+    available_seats = screening.check_available_seats()
+
+    if available_seats == 0
+      return nil
+    end
 
     new_ticket = Ticket.new({'customer_id' => @id, 'film_id' => film.id,
       'screening_id' => screening.id})
 
     new_ticket.save()
 
-    #update tickets sold
+    #update tickets sold by 1
 
-    screening.tickets_sold += 1
-    screening.update()
+    screening.increase_tickets_sold()
 
     @funds -= film.price
 
     update()
-    # Not sure what to return ?
-    return @funds
+
+    return new_ticket
   end
 
   def films
@@ -95,7 +96,7 @@ class Customer
     sql = "SELECT * FROM customers"
 
     query_customers = SqlRunner.run(sql)
-    customers = query_customers.map{|customer| Customer.new(customer)}
+    customers = Customer.map_items(query_customers)
 
     return customers
   end
@@ -106,16 +107,18 @@ class Customer
     SqlRunner.run(sql)
   end
 
-  def self.find(id)
-
-  end
 
   # helper method
 
-  def self.map_items(customer_hashes)
-    result = customer_hashes.map {|customer_hash|
-    Customer.new(customer_hash)}
+  def self.map_items(customer_data)
+    result = customer_data.map {|customer|
+    Customer.new(customer)}
     return result
+  end
+
+  def self.map_item(customer_data)
+    result = Customer.map_items(customer_data)
+    return result.first
   end
 
 end

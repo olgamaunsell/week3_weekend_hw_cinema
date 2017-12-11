@@ -85,7 +85,7 @@ film1screening2 = Screening.new({
   'film_id' => film1.id,
   'screening_date' => 'December 11 2017',
   'screening_time' => '22:00',
-  'capacity' => '13',
+  'capacity' => '12',
   'tickets_sold' => '12'
   })
 
@@ -94,7 +94,7 @@ film1screening2.save()
 film2screening1 = Screening.new({
   'film_id' => film2.id,
   'screening_date' => 'December 11 2017',
-  'screening_time' => '21:00',
+  'screening_time' => '18:00',
   'capacity' => '20',
   'tickets_sold' => '15'
   })
@@ -113,7 +113,7 @@ film2screening2.save()
 #Update screening
 
 film1screening1.screening_time = '19:30'
-film1screening1.capacity = '12'
+film1screening1.capacity = 12
 
 film1screening1.update()
 
@@ -202,9 +202,13 @@ film2_popular_screening = film2.most_popular_screening()
 
 # Limit the available tickets for screenings.
 
-# ** not got this working for checking capacity **
+
+film2_sc1_available_seats = film2screening1.check_available_seats()
+
 customer1_buy_ticket = customer1.buy_film_ticket(film2, film2screening1)
-customer2_buy_ticket = customer2.buy_film_ticket(film1, film1screening1)
+
+# This will return nil as no seats available
+customer2_buy_ticket = customer2.buy_film_ticket(film1, film1screening2)
 
 # Add any other extensions you think would be great to have at a cinema!
 

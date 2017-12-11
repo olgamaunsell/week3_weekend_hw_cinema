@@ -96,7 +96,7 @@ class Film
 
     query_films = SqlRunner.run(sql)
 
-    films = query_films.map{|film| Film.new(film)}
+    films = Film.map_items(query_films)
 
     return films
   end
@@ -113,9 +113,14 @@ class Film
 
   # helper method
 
-  def self.map_items(film_hashes)
-    result = film_hashes.map {|film_hash|
-    Film.new(film_hash)}
+  def self.map_items(film_data)
+    result = film_data.map {|film|
+    Film.new(film)}
     return result
+  end
+
+  def Film.map_item(film_data)
+   result = Film.map_items(film_data)
+   return result.first
   end
 end
